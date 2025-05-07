@@ -1,0 +1,29 @@
+name: 🍪 Bake Docker Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  bake:
+    name: 🍪 Bake Image
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Bake (Build and optionally Push Docker Image)
+        uses: docker/bake-action@v6
+        with:
+          files: docker-bake.hcl
+          push: ${{ startsWith(github.ref, 'refs/tags') }}
+          set: |
+            *.tags=ghcr.io/nhudson/clerkcli:${{ github.sha }}
+            ${{ startsWith(github.ref, 'refs/tags') && '*.tags=ghcr.io/nhudson/clerkcli:latest' || '' }}
