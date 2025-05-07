@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "config:base"
+    ],
+    "packageRules": [
+        {
+            "managers": [
+                "cargo"
+            ],
+            "enabled": true
+        },
+        {
+            "managers": [
+                "dockerfile"
+            ],
+            "enabled": true
+        },
+        {
+            "managers": [
+                "github-actions"
+            ],
+            "enabled": true
+        }
+    ]
+}
