@@ -9,11 +9,19 @@ clerkcli is a fast, flexible command-line tool for querying and managing users i
 - Filter and sort results
 - Built in Rust for speed and reliability
 
+## Installation
+
+You can install the latest release from [crates.io](https://crates.io/crates/clerkcli) using Cargo:
+
+```sh
+cargo install clerkcli
+```
+
 ## Usage
 
 ```sh
-clerkcli users --org-id org_abc,org_xyz --order-by -created_at
-clerkcli users --org-id org_abc --emails-only
+clerkcli users list --org-id org_abc,org_xyz --order-by -created_at
+clerkcli users list --org-id org_abc --emails-only
 ```
 
 ## Container Usage

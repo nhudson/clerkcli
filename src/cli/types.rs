@@ -15,14 +15,26 @@ pub struct Cli {
 /// Subcommands for the clerkcli application.
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// List users in a Clerk organization
+    /// Operations related to users
+    #[command(alias = "u")]
     Users {
-        /// Comma-separated list of organization IDs to query
-        #[arg(
-            long,
-            value_name = "ORG_IDS",
-            help = "Comma-separated list of organization IDs to query"
-        )]
+        #[command(subcommand)]
+        command: UsersCommand,
+    },
+    // Placeholder for future subcommands, e.g. Organizations
+}
+
+/// Subcommands for user-related operations in the CLI.
+///
+/// This enum defines all subcommands available under the 'users' top-level command,
+/// such as listing users. Additional user-related subcommands can be added here in the future.
+#[derive(Subcommand, Debug)]
+pub enum UsersCommand {
+    /// List users in a Clerk organization
+    #[command(alias = "l")]
+    List {
+        /// Organization ID to query
+        #[arg(long, value_name = "ORG_ID", help = "Organization ID to query")]
         org_id: String,
         /// Order users by a field. Options: created_at, updated_at, email_address, web3wallet, first_name, last_name, phone_number, username, last_active_at, last_sign_in_at. Use + or - prefix for ascending/descending. Default: last_sign_in_at
         #[arg(
