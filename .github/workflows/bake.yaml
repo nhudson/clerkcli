@@ -31,5 +31,5 @@ jobs:
           files: docker-bake.hcl
           push: ${{ startsWith(github.ref, 'refs/tags') }}
           set: |
-            *.tags=ghcr.io/${{ secrets.GIT_ORG }}/clerkcli:${{ github.sha }}
-            ${{ startsWith(github.ref, 'refs/tags') && '*.tags=ghcr.io/${{ secrets.GIT_ORG }}/clerkcli:latest' || '' }}
+            *.tags=ghcr.io/nhudson/clerkcli:${{ github.sha }}
+            ${{ startsWith(github.ref, 'refs/tags') && '*.tags=ghcr.io/nhudson/clerkcli:latest' || '' }}
