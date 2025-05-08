@@ -25,11 +25,35 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GIT_ORG }}
           password: ${{ secrets.GH_TOKEN }}
+      - name: Extract git short SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Get version from tag
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" =~ refs/tags/v(.+) ]]; then
+            echo "version=${BASH_REMATCH[1]}" >> $GITHUB_OUTPUT
+          else
+            echo "version=dev" >> $GITHUB_OUTPUT
+          fi
+      - name: Check if this is a release tag
+        id: release_check
+        run: |
+            TAG="${GITHUB_REF##*/}"
+            if [[ "$TAG" == *-* ]]; then
+            echo "is_release=false" >> $GITHUB_OUTPUT
+            else
+            echo "is_release=true" >> $GITHUB_OUTPUT
+            fi
       - name: Bake (Build and optionally Push Docker Image)
         uses: docker/bake-action@v6
         with:
-          files: docker-bake.hcl
-          push: ${{ startsWith(github.ref, 'refs/tags') }}
-          set: |
-            *.tags=ghcr.io/nhudson/clerkcli:${{ github.sha }}
-            ${{ startsWith(github.ref, 'refs/tags') && '*.tags=ghcr.io/nhudson/clerkcli:latest' || '' }}
+            files: docker-bake.hcl
+            push: ${{ startsWith(github.ref, 'refs/tags') }}
+            set: |
+                registry=ghcr.io/nhudson
+                version=${{ steps.version.outputs.version }}
+                revision=${{ steps.vars.outputs.sha_short }}
+                default.tags=ghcr.io/nhudson/clerkcli:${{ steps.version.outputs.version }}
+                default.tags=ghcr.io/nhudson/clerkcli:${{ steps.vars.outputs.sha_short }}
+                ${{ steps.release_check.outputs.is_release == 'true' && 'default.tags=ghcr.io/nhudson/clerkcli:latest' || '' }}
