@@ -11,7 +11,15 @@ struct UserRow {
     email: String,
 }
 
-/// Fetches a user's name and email by user_id and org name, returning a UserRow for table or email output.
+/// Fetches a user's name and email by user ID and organization name, returning a UserRow for table or email output.
+///
+/// # Arguments
+/// * `client` - Reference to the initialized Clerk API client.
+/// * `org_name` - Name of the organization the user belongs to.
+/// * `user_id` - The ID of the user to fetch.
+///
+/// # Returns
+/// * `UserRow` containing the organization name, user name, and email address (or error placeholders if not found).
 async fn get_user_name_and_email(client: &Clerk, org_name: &str, user_id: &str) -> UserRow {
     match User::get_user(client, user_id).await {
         Ok(user_detail) => {
@@ -38,6 +46,14 @@ async fn get_user_name_and_email(client: &Clerk, org_name: &str, user_id: &str) 
 }
 
 /// Fetches all users for a given organization, ordered by the specified field.
+///
+/// # Arguments
+/// * `client` - Reference to the initialized Clerk API client.
+/// * `org_id` - The ID of the organization whose users to fetch.
+/// * `order_by` - Field to order users by (e.g., created_at, email_address, etc.).
+///
+/// # Returns
+/// * `Vec<User>` containing all users in the organization, or an empty vector on error.
 async fn fetch_org_users(
     client: &Clerk,
     org_id: &str,
@@ -69,6 +85,14 @@ async fn fetch_org_users(
 }
 
 /// Builds a vector of UserRow structs for all users in an organization, fetching each user's name and email.
+///
+/// # Arguments
+/// * `client` - Reference to the initialized Clerk API client.
+/// * `org_name` - Name of the organization.
+/// * `users` - Vector of user models to process.
+///
+/// # Returns
+/// * `Vec<UserRow>` containing a row for each user in the organization.
 async fn build_user_rows(
     client: &Clerk,
     org_name: &str,
@@ -94,7 +118,16 @@ async fn build_user_rows(
 }
 
 /// Lists users for one or more organizations, printing either a table or just email addresses depending on the emails_only flag.
-/// For each org, verifies the org, fetches users, builds user rows, and prints the result.
+///
+/// For each organization, verifies the org, fetches users, builds user rows, and prints the result.
+///
+/// # Arguments
+/// * `client` - Reference to the initialized Clerk API client.
+/// * `org_ids` - Slice of organization IDs to list users for.
+/// * `order_by` - Field to order users by.
+/// * `emails_only` - If true, only print email addresses; otherwise, print a formatted table.
+///
+/// Prints results to stdout.
 pub async fn list_orgs_users(
     client: &Clerk,
     org_ids: &[String],
