@@ -47,13 +47,14 @@ jobs:
             fi
       - name: Bake (Build and optionally Push Docker Image)
         uses: docker/bake-action@v6
+        env:
+            registry: ghcr.io/nhudson
+            version: ${{ steps.version.outputs.version }}
+            revision: ${{ steps.vars.outputs.sha_short }}
         with:
             files: docker-bake.hcl
             push: ${{ startsWith(github.ref, 'refs/tags') }}
             set: |
-                registry=ghcr.io/nhudson
-                version=${{ steps.version.outputs.version }}
-                revision=${{ steps.vars.outputs.sha_short }}
                 default.tags=ghcr.io/nhudson/clerkcli:${{ steps.version.outputs.version }}
                 default.tags=ghcr.io/nhudson/clerkcli:${{ steps.vars.outputs.sha_short }}
                 ${{ steps.release_check.outputs.is_release == 'true' && 'default.tags=ghcr.io/nhudson/clerkcli:latest' || '' }}
